@@ -21,9 +21,6 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run build (if applicable)
-        run: npm run build  # Adjust if you have a build step
-
       - name: Deploy to Hetzner
         env:
           SSH_PRIVATE_KEY: ${{ secrets.HETZNER_SSH_PRIVATE_KEY }}
