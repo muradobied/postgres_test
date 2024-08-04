@@ -20,7 +20,7 @@ jobs:
 
     - name: Copy files to Hetzner server
       run: |
-        scp -r ./* ${{ secrets.HETZNER_SERVER_USER }}@${{ secrets.HETZNER_SERVER_IP }}:/root/my_project
+        scp -o StrictHostKeyChecking=no -r ./* ${{ secrets.HETZNER_SERVER_USER }}@${{ secrets.HETZNER_SERVER_IP }}:/root/my_project
 
     - name: Run books.js on Hetzner server
       run: |
