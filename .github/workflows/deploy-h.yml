@@ -19,7 +19,7 @@ jobs:
         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
     - name: Deploy to Hetzner
-      run: ssh -o StrictHostKeyChecking=no root@128.140.104.144 'chmod +x /root/my_project/deploy.sh && /root/my_project/deploy.sh'
+      run: ssh -o StrictHostKeyChecking=no root@128.140.104.144 'bash -s' < /root/my_project
       env:
        SSH_AUTH_SOCK: /tmp/ssh-XXXXXXCFrqJN/agent.1810
        SSH_AGENT_PID: 1811
