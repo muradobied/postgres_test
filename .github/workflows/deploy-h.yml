@@ -3,27 +3,36 @@ name: Deploy to Hetzner
 on:
   push:
     branches:
-     - main  # Adjust if you want to trigger on different branches
+      - main  # Change this to your deployment branch
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-     - name: Checkout code
-       uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-     - name: Set up SSH
-       run: |
-        mkdir -p ~/.ssh
-        echo "${{ secrets.HETZNER_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        ssh-keyscan 37.27.44.92 >> ~/.ssh/known_hosts
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'  # Specify your Node.js version
 
-     - name: Copy files to Hetzner server
-       run: |
-        scp -o StrictHostKeyChecking=no -r . root@37.27.44.92:/root/my_project
+      - name: Install dependencies
+        run: npm install
 
-     - name: Run books.js on Hetzner server
-       run: |
-        ssh -o StrictHostKeyChecking=no root@37.27.44.92 "node /root/my_project/books.js"
+      - name: Run build (if applicable)
+        run: npm run build  # Adjust if you have a build step
+
+      - name: Deploy to Hetzner
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.HETZNER_SSH_PRIVATE_KEY }}
+        run: |
+          echo "$SSH_PRIVATE_KEY" > private_key.pem
+          chmod 600 private_key.pem
+          ssh -i private_key.pem -o StrictHostKeyChecking=no root@37.27.44.92 << 'EOF'
+            cd /root/my_project
+            git pull origin main
+            npm install
+            pm2 restart all  # Or whatever command you use to start your app
+          EOF
