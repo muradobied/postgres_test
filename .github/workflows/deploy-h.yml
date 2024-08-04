@@ -20,5 +20,6 @@ jobs:
 
       - name: Deploy to Hetzner
         run: |
-          ssh -o StrictHostKeyChecking=no root@128.140.104.144 "cd /root/my_project && git pull origin main && ./deploy.sh"
+          ssh -o StrictHostKeyChecking=no root@128.140.104.144 'bash -s' < /root/my_project/deploy.sh
+    # "cd /root/my_project && git pull origin main && ./deploy.sh"
 
