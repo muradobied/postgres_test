@@ -30,9 +30,9 @@ jobs:
 
       - name: Deploy to Hetzner
         run: |
-          ssh -o StrictHostKeyChecking=no root@37.27.44.92 << 'EOF'
+          ssh -o StrictHostKeyChecking=no root@37.27.44.92 << 'EOF
             cd /root/my_project
             git pull origin main
             npm install
             pm2 restart all
-          EOF
+          EOF'
