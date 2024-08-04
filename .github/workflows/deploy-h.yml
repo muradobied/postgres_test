@@ -10,16 +10,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Setup SSH
-      uses: webfactory/ssh-agent@v0.5.3
-      with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: Set up SSH
+        uses: shimataro/ssh-action@v2
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-    - name: Deploy to Hetzner
-      run: ssh -o StrictHostKeyChecking=no root@128.140.104.144 'bash -s' < /root/my_project/deploy.sh
-      env:
-       SSH_AUTH_SOCK: /tmp/ssh-XXXXXXCFrqJN/agent.1810
-       SSH_AGENT_PID: 1811
+      - name: Deploy to Hetzner
+        run: |
+          ssh -o StrictHostKeyChecking=no root@128.140.104.144 "cd /root/my_project && git pull origin main && ./deploy.sh"
+
