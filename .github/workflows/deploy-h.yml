@@ -1,0 +1,32 @@
+name: Deploy to Hetzner
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.HETZNER_SSH_PRIVATE_KEY }}
+
+      - name: Deploy to Hetzner
+        env:
+          SSH_HOST: 37.27.44.92
+          SSH_USER: root
+          SSH_PORT: 22
+        run: |
+          ssh $SSH_USER@$SSH_HOST -p $SSH_PORT << 'EOF'
+            cd /root/my_project
+            git pull origin main
+            npm install
+            pm2 restart books
+          EOF
