@@ -20,3 +20,6 @@ jobs:
 
     - name: Deploy to Hetzner
       run: ssh -o StrictHostKeyChecking=no root@37.27.44.92 'bash -s' < /root/my_project/deploy.sh
+       env:
+       SSH_AUTH_SOCK: /tmp/ssh-XXXXXXCFrqJN/agent.1810
+       SSH_AGENT_PID: 1811
