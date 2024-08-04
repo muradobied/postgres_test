@@ -31,5 +31,5 @@ jobs:
             cd /root/my_project
             git pull origin main
             npm install
-            pm2 restart all  # Or whatever command you use to start your app
+            pm2 restart all
           EOF
