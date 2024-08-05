@@ -33,7 +33,12 @@ jobs:
       run: |
         ssh root@128.140.104.144 << 'EOF'
           cd /root/my_project
-          git pull origin main
+          if [ ! -d ".git" ]; then
+            git init
+            git remote add origin git@github.com:muradobied/postgres_test.git
+          fi
+          git fetch origin
+          git reset --hard origin/main
           npm install
           if pm2 describe books > /dev/null; then
             pm2 restart books
@@ -41,3 +46,4 @@ jobs:
             pm2 start /root/my_project/books.js --name books
           fi
         EOF
+    # git pull origin main
