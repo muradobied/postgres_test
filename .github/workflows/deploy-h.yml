@@ -40,7 +40,7 @@ jobs:
       
     - name: deploying
       with:
-        script:
+        script: |
           docker pull DOCKER_USER/Books-app:latest
           docker stop Books-container || true
           docker rm Books-container || true
