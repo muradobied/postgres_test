@@ -37,7 +37,7 @@ jobs:
             git remote add origin git@github.com:muradobied/postgres_test.git
           fi
           git fetch origin
-          git reset --hard origin/main
+          git reset --origin/main
           cd /root/my_project
           npm install
           if pm2 describe books > /dev/null; then
