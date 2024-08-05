@@ -28,5 +28,4 @@ jobs:
         cd /root/my_project/postgres_test
         git pull origin main
         npm install
-        pm2 restart all
         EOF
