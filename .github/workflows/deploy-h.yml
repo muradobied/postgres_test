@@ -28,7 +28,10 @@ jobs:
 
     - name: Build project
       run: npm run build
-
+      env:
+        SSH_AUTH_SOCK: /tmp/ssh-XXXXXX4iWoBC/agent.1745
+        SSH_AGENT_PID: 1746
+      
     - name: Deploy to Hetzner
       run: |
         ssh root@128.140.104.144 << 'EOF'
