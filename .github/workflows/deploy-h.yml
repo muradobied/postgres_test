@@ -25,10 +25,8 @@ jobs:
       - name: Deploy to Hetzner
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          HETZNER_HOST: ${{ secrets.HETZNER_SERVER_IP }}
-          HETZNER_USER: ${{ secrets.HETZNER_SERVER_USER }}
         run: |
           echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
-          ssh -o StrictHostKeyChecking=no $HETZNER_USER@$HETZNER_HOST "mkdir -p /var/www/books"
-          rsync -avz --delete-after --exclude=node_modules ./ $HETZNER_USER@$HETZNER_HOST:/var/www/books/
-          ssh $HETZNER_USER@$HETZNER_HOST "cd /var/www/books && npm install --production && pm2 restart all"  # Adjust to your server setup
+          ssh -o StrictHostKeyChecking=no root@128.140.104.144 "mkdir -p /var/www/books"
+          rsync -avz --delete-after --exclude=node_modules ./ root@128.140.104.144 :/var/www/books/
+          ssh root@128.140.104.144 "cd /var/www/books && npm install --production && pm2 restart all"  # Adjust to your server setup
