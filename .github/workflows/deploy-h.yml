@@ -32,13 +32,13 @@ jobs:
     - name: Deploy to Hetzner
       run: |
         ssh root@128.140.104.144 << 'EOF'
-          cd /root/my_project
           if [ ! -d ".git" ]; then
             git init
             git remote add origin git@github.com:muradobied/postgres_test.git
           fi
           git fetch origin
           git reset --hard origin/main
+          cd /root/my_project
           npm install
           if pm2 describe books > /dev/null; then
             pm2 restart books
