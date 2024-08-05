@@ -1,7 +1,7 @@
 const express = require('express');
 const { Pool } = require('pg');
 
-// Initialize Express app
+// Initialize Express app (and testing)
 const app = express();
 const port = process.env.PORT || 3000;
 
