@@ -27,9 +27,6 @@ jobs:
         push: true
         tags: ${{ secrets.DOCKER_USER }}/books-app:latest
       
-    - name: Application Directory
-      run: cd /root/my_project/postgres_test
-      
     - name: deploying
       uses: appleboy/ssh-action@v0.1.4
       with:
