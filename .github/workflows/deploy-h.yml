@@ -35,5 +35,9 @@ jobs:
           cd /root/my_project
           git pull origin main
           npm install
-          pm2 restart all
+          if pm2 describe books > /dev/null; then
+            pm2 restart books
+          else
+            pm2 start /root/my_project/books.js --name books
+          fi
         EOF
