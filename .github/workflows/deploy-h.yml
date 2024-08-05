@@ -1,32 +1,40 @@
-# .github/workflows/deploy.yml
 name: Deploy to Hetzner
 
 on:
   push:
     branches:
-      - main  # Adjust to your main branch name
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14'  # Adjust Node.js version as needed
+    - name: Set up SSH
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: Install dependencies
-        run: npm install
+    - name: Install Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'
 
-      - name: Deploy to Hetzner
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-        run: |
-          echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
-          ssh -o StrictHostKeyChecking=no root@128.140.104.144 "mkdir -p /var/www/books"
-          rsync -avz --delete-after --exclude=node_modules ./ root@128.140.104.144 :/var/www/books/
-          ssh root@128.140.104.144 "cd /var/www/books && npm install --production && pm2 restart all"  # Adjust to your server setup
+    - name: Install dependencies
+      run: npm install
+
+    - name: Build project
+      run: npm run build
+
+    - name: Deploy to Hetzner
+      run: |
+        ssh root@128.140.104.144 << 'EOF'
+          cd /path/to/your/app
+          git pull origin main
+          npm install
+          npm run build
+          pm2 restart all
+        EOF
