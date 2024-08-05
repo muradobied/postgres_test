@@ -25,7 +25,7 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         push: true
-        tags: ${{ secrets.DOCKER_USER }}/Books-app:latest
+        tags: ${{ secrets.DOCKER_USER }}/books-app:latest
       
     - name: Application Directory
       run: cd /root/my_project/postgres_test
@@ -38,7 +38,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            docker pull DOCKER_USER/Books-app:latest
-            docker stop Books-container || true
-            docker rm Books-container || true
-            docker run -d --name Books-container DOCKER_USER/Books-app:latest
+            docker pull DOCKER_USER/books-app:latest
+            docker stop books-container || true
+            docker rm books-container || true
+            docker run -d --name books-container DOCKER_USER/books-app:latest
