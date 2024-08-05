@@ -1,11 +1,4 @@
 {
-  "scripts": {
-    "build": "webpack --config webpack.config.js"
-  }
-}
-
-
-{
   "name": "node-and-postgres",
   "version": "1.0.0",
   "main": "books.js",
