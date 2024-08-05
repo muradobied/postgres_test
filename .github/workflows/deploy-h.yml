@@ -10,16 +10,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
-      - name: Setup SSH
-        uses: webfactory/ssh-agent@v0.5.3
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+    - name: Set up SSH
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: Deploy to Hetzner
-        run: |
-          ssh -o StrictHostKeyChecking=no root@128.140.104.144 'bash -s' < /root/my_project/deploy.sh
-    # "cd /root/my_project && git pull origin main && ./deploy.sh"
+    - name: Install Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'
 
+    - name: Install dependencies
+      run: npm install
+
+    - name: Build project
+      run: npm run build
+
+    - name: Deploy to Hetzner
+      run: |
+        ssh root@128.140.104.144 << 'EOF'
+          cd /root/my_project
+          git pull origin main
+          npm install
+          npm run build
+          pm2 restart all
+        EOF
