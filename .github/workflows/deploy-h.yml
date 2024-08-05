@@ -29,6 +29,6 @@ jobs:
           HETZNER_USER: ${{ secrets.HETZNER_SERVER_USER }}
         run: |
           echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
-          ssh -o StrictHostKeyChecking=no $HETZNER_SERVER_USER@$HETZNER_SERVER_IP "mkdir -p /var/www/books"
-          rsync -avz --delete-after --exclude=node_modules ./ $HETZNER_SERVER_USER@$HETZNER_SERVER_IP:/var/www/books/
-          ssh $HETZNER_SERVER_USER@$HETZNER_SERVER_IP "cd /var/www/books && npm install --production && pm2 restart all"  # Adjust to your server setup
+          ssh -o StrictHostKeyChecking=no $HETZNER_USER@$HETZNER_HOST "mkdir -p /var/www/books"
+          rsync -avz --delete-after --exclude=node_modules ./ $HETZNER_USER@$HETZNER_HOST:/var/www/books/
+          ssh $HETZNER_USER@$HETZNER_HOST "cd /var/www/books && npm install --production && pm2 restart all"  # Adjust to your server setup
