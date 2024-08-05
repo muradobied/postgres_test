@@ -25,7 +25,7 @@ jobs:
     - name: Deploy to Hetzner
       run: |
         ssh root@128.140.104.144 << 'EOF'
-        cd /root/my_project
+        cd /root/my_project/postgres_test
         git pull origin main
         npm install
         npm run build
