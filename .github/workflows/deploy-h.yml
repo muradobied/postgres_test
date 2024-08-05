@@ -26,22 +26,19 @@ jobs:
       with:
         push: true
         tags: ${{ secrets.DOCKER_USER }}/Books-app:latest
-
-    - name: Using ssh
-      uses: appleboy/ssh-action@v0.1.4
-      with:
-        host: ${{ secrets.HETZNER_SERVER_IP }}
-        username: ${{ secrets.HETZNER_SERVER_USER }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        port: 22
       
     - name: Application Directory
       run: cd /root/my_project/postgres_test
       
     - name: deploying
+      uses: appleboy/ssh-action@v0.1.4
       with:
-        script: |
-          docker pull DOCKER_USER/Books-app:latest
-          docker stop Books-container || true
-          docker rm Books-container || true
-          docker run -d --name Books-container DOCKER_USER/Books-app:latest
+          host: ${{ secrets.HETZNER_SERVER_IP }}
+          username: ${{ secrets.HETZNER_SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            docker pull DOCKER_USER/Books-app:latest
+            docker stop Books-container || true
+            docker rm Books-container || true
+            docker run -d --name Books-container DOCKER_USER/Books-app:latest
