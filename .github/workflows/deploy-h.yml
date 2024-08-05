@@ -19,7 +19,7 @@ jobs:
         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
     - name: Add server to known_hosts
-      run: ssh-keyscan ${{ secrets.HETZNER_HOST }} >> ~/.ssh/known_hosts
+      run: ssh-keyscan ${{ secrets.HETZNER_SERVER_IP }} >> ~/.ssh/known_hosts
 
     - name: Install Node.js
       uses: actions/setup-node@v2
