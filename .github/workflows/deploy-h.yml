@@ -28,6 +28,5 @@ jobs:
         cd /root/my_project/postgres_test
         git pull origin main
         npm install
-        npm run books.js
         pm2 restart all
         EOF
