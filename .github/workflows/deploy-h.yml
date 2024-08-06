@@ -26,7 +26,7 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         push: true
-        tags: ${{ secrets.DOCKER_USER }}/books-app:latest
+        tags: ${{ secrets.DOCKER_USER }}/books-app:${{ github.sha }}
 
   deploy:  #deploying the image from dockerhub to the hetzner server
     runs-on: ubuntu-latest
@@ -41,7 +41,8 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         #port: 22
         script: | #the script to run the docker image on the hetzner server
-          docker pull DOCKER_USER/books-app:latest
+          docker pull DOCKER_USER/books-app:${{ github.sha }}
           docker stop books-container || true
           docker rm books-container || true
-          docker run -d --name books-container ${{ secrets.DOCKER_USER }}/books-app:latest
+          docker run -d --name books-container ${{ secrets.DOCKER_USER }}/books-app:${{ github.sha }}
+          docker image rm DOCKER_USER/books-app:${{ github.sha }}
