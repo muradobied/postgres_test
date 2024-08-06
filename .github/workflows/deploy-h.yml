@@ -1,34 +1,34 @@
-name: Build and Deploy Docker Image
+name: Build and Deploy Docker Image #on hetzner training-devops server
 
 on:
   push:
     branches:
-      - main
+      - main #selecting the main branch on github repo
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
+    - name: Checkout code  #checking the code syntax 
       uses: actions/checkout@v3
 
-    - name: Set up Docker Buildx
+    - name: Set up Docker Buildx  #building an image of the project
       uses: docker/setup-buildx-action@v2
 
-    - name: Log in to Docker Hub
+    - name: Log in to Docker Hub  #using docker credintials to login dockerhub
       uses: docker/login-action@v2
       with:
         username: ${{ secrets.DOCKER_USER }}
         password: ${{ secrets.DOCKER_PASS }}
 
-    - name: Build and push Docker image
+    - name: Build and push Docker image #pushing the image on dockerhub repository as a latest build
       uses: docker/build-push-action@v2
       with:
         push: true
         tags: ${{ secrets.DOCKER_USER }}/books-app:latest
 
-  deploy:
+  deploy:  #deploying the image from dockerhub to the hetzner server
     runs-on: ubuntu-latest
     needs: build
 
@@ -40,7 +40,7 @@ jobs:
         username: ${{ secrets.SSH_USER }}
         key: ${{ secrets.SSH_KEY }}
         #port: 22
-        script: |
+        script: | #the script to run the docker image on the hetzner server
           docker pull DOCKER_USER/books-app:latest
           docker stop books-container || true
           docker rm books-container || true
