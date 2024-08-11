@@ -44,18 +44,8 @@ jobs:
                docker stop booksjs || true &&
                docker rm booksjs || true &&
                docker run -d --name booksjs -p 3000:3000 ${{ secrets.DOCKER_USER }}/books.js:latest
-          
-
-      - name: Configure Nginx
-        uses: appleboy/ssh-action@v1.0.0
-        with:
-           host: ${{ secrets.SSH_HOST }}
-           username: ${{ secrets.SSH_USER }}
-           key: ${{ secrets.SSH_KEY }}
-           
-           script: |
-             cat > /etc/nginx/sites-available/booksjs <<EOF
-             server {
+               cat > /etc/nginx/sites-available/booksjs <<EOF
+               server {
                 listen 80;
 
                 server_name books.training-devops.sociumtech.com;
@@ -67,8 +57,8 @@ jobs:
                     proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
                     proxy_set_header X-Forwarded-Proto \$scheme;
                 }
-            }
-            EOF
-            ln -s /etc/nginx/sites-available/booksjs /etc/nginx/sites-enabled/
-            nginx -s reload
+               }
+               EOF
+               ln -s /etc/nginx/sites-available/booksjs /etc/nginx/sites-enabled/
+               nginx -s reload
           
