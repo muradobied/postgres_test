@@ -27,7 +27,7 @@ jobs:
         script: | #the script to run the docker image on the hetzner server
           set -exu
           cd backend
-          git pull origin postgres_test
+          git pull origin main
           cd postgres_test
           docker build -f Dockerfile . -t books-app:${SHA} \
           --build-arg="booksServer=172.17.0.1" \
