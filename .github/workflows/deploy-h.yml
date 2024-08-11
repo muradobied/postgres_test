@@ -28,7 +28,7 @@ jobs:
           set -exu
           cd /root/backend
           git pull origin main
-          docker build -f Dockerfile . -t books-app:${SHA} \
+          docker build -f Dockerfile . -t books-app:${{ github.sha }} \
           --build-arg="booksServer=172.17.0.1" \
           docker stop books-container || true
           docker rm books-container || true
