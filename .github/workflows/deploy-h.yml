@@ -28,8 +28,7 @@ jobs:
           set -exu
           cd /root/backend/postgres_test
           git pull origin main
-          docker build -f Dockerfile . -t books-app:${{ github.sha }} \
-          --build-arg="booksServer=172.17.0.1" \
+          docker build -f Dockerfile . -t books-app:${{ github.sha }}
           docker stop books-container || true
           docker rm books-container || true
           docker run -d --name books-container books-app:${{ github.sha }}
