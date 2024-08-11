@@ -47,10 +47,15 @@ jobs:
           
 
       - name: Configure Nginx
-        run: |
-          ssh root@${{ secrets.SSH_HOST }} "
-            cat > /etc/nginx/sites-available/booksjs <<EOF
-            server {
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+           host: ${{ secrets.SSH_HOST }}
+           username: ${{ secrets.SSH_USER }}
+           key: ${{ secrets.SSH_KEY }}
+           
+           scrip: |
+             cat > /etc/nginx/sites-available/booksjs <<EOF
+             server {
                 listen 80;
 
                 server_name books.training-devops.sociumtech.com;
@@ -66,4 +71,4 @@ jobs:
             EOF
             ln -s /etc/nginx/sites-available/booksjs /etc/nginx/sites-enabled/
             nginx -s reload
-          "
+          
