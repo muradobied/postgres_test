@@ -26,9 +26,8 @@ jobs:
         #port: 22
         script: | #the script to run the docker image on the hetzner server
           set -exu
-          cd /root/backend
+          cd /root/backend/postgres_test
           git pull origin main
-          cd postgres_test
           docker build -f Dockerfile . -t books-app:${{ github.sha }} \
           --build-arg="booksServer=172.17.0.1" \
           docker stop books-container || true
