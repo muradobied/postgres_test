@@ -1,35 +1,67 @@
-name: Build and Deploy Docker Image #on hetzner training-devops server
+name: Deploy to Hetzner
 
 on:
   push:
     branches:
-      - main #selecting the main branch on github repo
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code  #checking the code syntax 
-      uses: actions/checkout@v3
-      
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-  deploy:  #deploying the image from dockerhub to the hetzner server
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_PASS }}
+
+      - name: Build and push Docker image
+        run: |
+          docker build -t ${{ secrets.DOCKER_USER }}/books.js:latest .
+          docker push ${{ secrets.DOCKER_USER }}/books.js:latest
+
+  deploy:
+    needs: build
     runs-on: ubuntu-latest
+
     steps:
-    - name: Setup The CI/CD
-      uses: appleboy/ssh-action@v1.0.0
-      with:
-        host: ${{ secrets.SSH_HOST }}
-        username: ${{ secrets.SSH_USER }}
-        key: ${{ secrets.SSH_KEY }}
-        #port: 22
-        script: | #the script to run the docker image on the hetzner server
-          set -exu
-          cd /root/backend/postgres_test
-          git pull origin main
-          docker build -f Dockerfile . -t books-app:${{ github.sha }}
-          docker stop books-container || true
-          docker rm books-container || true
-          docker run -d --name books-container books-app:${{ github.sha }}
-          docker image prune -a -f
+      - name: Deploy to Hetzner server
+        run: |
+          ssh root@${{ secrets.SSH_HOST }} "
+            docker pull ${{ secrets.DOCKER_USER }}/books.js:latest &&
+            docker stop booksjs || true &&
+            docker rm booksjs || true &&
+            docker run -d --name booksjs -p 3000:3000 ${{ secrets.DOCKER_USER }}/books.js:latest
+          "
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_KEY }}
+          HETZNER_IP: ${{ secrets.SSH_HOST }}
+
+      - name: Configure Nginx
+        run: |
+          ssh root@${{ secrets.SSH_HOST }} "
+            cat > /etc/nginx/sites-available/booksjs <<EOF
+            server {
+                listen 80;
+
+                server_name books.training-devops.sociumtech.com;
+
+                location / {
+                    proxy_pass http://localhost:3000;
+                    proxy_set_header Host \$host;
+                    proxy_set_header X-Real-IP \$remote_addr;
+                    proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+                    proxy_set_header X-Forwarded-Proto \$scheme;
+                }
+            }
+            EOF
+            ln -s /etc/nginx/sites-available/booksjs /etc/nginx/sites-enabled/
+            nginx -s reload
+          "
