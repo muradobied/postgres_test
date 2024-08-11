@@ -7,9 +7,9 @@ const port = process.env.PORT || 3000;
 
 // Configure PostgreSQL client
 const pool = new Pool({
-  user: 'moradebaid',
-  host: '37.27.44.92', // e.g., 'db.hetzner.example.com'
-  database: 'postgres',
+  user: 'morad',
+  host: '128.140.104.144', // e.g., 'db.hetzner.example.com'
+  database: 'library',
   password: 'RAFrafRAF01@3',
   port: 5432,
 });
