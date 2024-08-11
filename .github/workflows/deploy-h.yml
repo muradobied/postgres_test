@@ -12,28 +12,12 @@ jobs:
     steps:
     - name: Checkout code  #checking the code syntax 
       uses: actions/checkout@v3
-
-    - name: Set up Docker Buildx  #building an image of the project
-      uses: docker/setup-buildx-action@v2
-
-    - name: Log in to Docker Hub  #using docker credintials to login dockerhub
-      uses: docker/login-action@v2
-      with:
-        username: ${{ secrets.DOCKER_USER }}
-        password: ${{ secrets.DOCKER_PASS }}
-
-    - name: Build and push Docker image #pushing the image on dockerhub repository as a latest build
-      uses: docker/build-push-action@v2
-      with:
-        push: true
-        tags: ${{ secrets.DOCKER_USER }}/books-app:${{ github.sha }}
+      
 
   deploy:  #deploying the image from dockerhub to the hetzner server
     runs-on: ubuntu-latest
-    needs: build
-
     steps:
-    - name: Deploy to Hetzner server
+    - name: Setup The CI/CD
       uses: appleboy/ssh-action@v1.0.0
       with:
         host: ${{ secrets.SSH_HOST }}
@@ -41,8 +25,13 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         #port: 22
         script: | #the script to run the docker image on the hetzner server
-          docker pull ${{ secrets.DOCKER_USER }}/books-app:${{ github.sha }}
+          set -exu
+          cd backend
+          git pull origin postgres_test
+          cd postgres_test
+          docker build -f Dockerfile . -t books-app:${SHA} \
+          --build-arg="booksServer=172.17.0.1" \
           docker stop books-container || true
           docker rm books-container || true
-          docker run -d --name books-container ${{ secrets.DOCKER_USER }}/books-app:${{ github.sha }}
+          docker run -d --name books-container books-app:${{ github.sha }}
           docker image prune -a -f
