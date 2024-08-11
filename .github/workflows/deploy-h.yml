@@ -53,7 +53,7 @@ jobs:
            username: ${{ secrets.SSH_USER }}
            key: ${{ secrets.SSH_KEY }}
            
-           scrip: |
+           script: |
              cat > /etc/nginx/sites-available/booksjs <<EOF
              server {
                 listen 80;
