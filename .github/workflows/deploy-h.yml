@@ -44,5 +44,5 @@ jobs:
           docker pull ${{ secrets.DOCKER_USER }}/books-app:${{ github.sha }}
           docker stop books-container || true
           docker rm books-container || true
-          docker run -d --name books-container ${{ secrets.DOCKER_USER }}/books-app:${{ github.sha }}
+          docker run -d --name books-container -p 80:80 ${{ secrets.DOCKER_USER }}/books-app:${{ github.sha }}
           docker image prune -a -f
