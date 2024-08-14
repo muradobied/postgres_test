@@ -34,6 +34,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: sonarsource/sonarqube-scan-action@master
+        env:
+             SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+             SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      # If you wish to fail your job when the Quality Gate is red, uncomment the
+      # following lines. This would typically be used to fail a deployment.
+      # - uses: sonarsource/sonarqube-quality-gate-action@master
+      #   timeout-minutes: 5
+      #   env:
+      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          
+
+
+    
       - name: Deploy to Hetzner server
         uses: appleboy/ssh-action@v1.0.0
         with:
@@ -64,14 +78,5 @@ jobs:
                ln -s /etc/nginx/sites-available/booksjs /etc/nginx/sites-enabled/
                nginx -s reload
                
-      - uses: sonarsource/sonarqube-scan-action@master
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-      # If you wish to fail your job when the Quality Gate is red, uncomment the
-      # following lines. This would typically be used to fail a deployment.
-      # - uses: sonarsource/sonarqube-quality-gate-action@master
-      #   timeout-minutes: 5
-      #   env:
-      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+     
           
